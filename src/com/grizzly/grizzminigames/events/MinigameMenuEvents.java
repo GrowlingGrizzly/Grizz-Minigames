@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class MinigameMenuEvents implements Listener {
 
     Grizz plugin = Grizz.pluginMain;
