@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="GrizzMinigames:jar">
-    <output-path>$PROJECT_DIR$/../Server/plugins</output-path>
-    <root id="archive" name="GrizzMinigames.jar">
-      <element id="module-output" name="GrizzMinigames" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../Server/plugins/Grizz.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>
