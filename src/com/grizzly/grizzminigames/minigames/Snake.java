@@ -1,4 +1,4 @@
-package com.grizzly.grizzminigames.Minigames;
+package com.grizzly.grizzminigames.minigames;
 
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzminigames.GrizzMinigames;

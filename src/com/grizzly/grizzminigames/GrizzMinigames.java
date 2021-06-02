@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
+@SuppressWarnings("ConstantConditions")
 public class GrizzMinigames extends JavaPlugin {
 
     public static GrizzMinigames pluginMinigames;
@@ -25,6 +26,7 @@ public class GrizzMinigames extends JavaPlugin {
         pm.registerEvents(new AceydouceyEvents(), this);
         pm.registerEvents(new SnakeEvents(), this);
         pm.registerEvents(new MinigameMenuEvents(), this);
+        pm.registerEvents(new EnergyFactoryEvents(), this);
         getCommand("minigamehistory").setExecutor(new CmdMinigameHistory());
         getCommand("blackjack").setExecutor(new CmdBlackJack());
         getCommand("highlow").setExecutor(new CmdHighLow());
@@ -44,7 +46,9 @@ public class GrizzMinigames extends JavaPlugin {
 
         getServer().getOnlinePlayers().forEach(player -> {
             if (player != null && player.getOpenInventory() != null)
-                if (player.getOpenInventory().getTitle().equalsIgnoreCase("§c§lSnake") || player.getOpenInventory().getTitle().equalsIgnoreCase("§2§lMinigames"))
+                if (player.getOpenInventory().getTitle().equalsIgnoreCase("§c§lSnake") ||
+                        player.getOpenInventory().getTitle().equalsIgnoreCase("§2§lMinigames") ||
+                        player.getOpenInventory().getTitle().contains("§a§lEnergy Factory"))
                 player.closeInventory();
         });
         pluginMain = null;

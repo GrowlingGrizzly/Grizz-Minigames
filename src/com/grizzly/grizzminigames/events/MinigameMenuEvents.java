@@ -3,7 +3,8 @@ package com.grizzly.grizzminigames.events;
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzmain.util.ConfigMaker;
 import com.grizzly.grizzminigames.GrizzMinigames;
-import com.grizzly.grizzminigames.Minigames.Snake;
+import com.grizzly.grizzminigames.minigames.EnergyFactory;
+import com.grizzly.grizzminigames.minigames.Snake;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,7 @@ public class MinigameMenuEvents implements Listener {
     Grizz plugin = Grizz.pluginMain;
     GrizzMinigames pluginMinigames = GrizzMinigames.pluginMinigames;
     Snake snake = new Snake();
+    EnergyFactory factory = new EnergyFactory();
     static HashMap<UUID, Boolean> minigameRunning = new HashMap<>();
 
     public void setGameRunning(Player player) { minigameRunning.put(player.getUniqueId(), true); }
@@ -38,7 +40,11 @@ public class MinigameMenuEvents implements Listener {
                 player.closeInventory();
                 snake.runSnake(player);
             }
-            if (e.getRawSlot() == 14) player.sendMessage("Opening Energy Factory!");
+            if (e.getRawSlot() == 14) {
+                setGameRunning(player);
+                player.closeInventory();
+                factory.runFactory(player);
+            }
             e.setCancelled(true);
         }
     }

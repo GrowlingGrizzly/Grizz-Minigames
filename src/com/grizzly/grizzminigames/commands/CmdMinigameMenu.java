@@ -33,9 +33,9 @@ public class CmdMinigameMenu implements TabExecutor {
         player.openInventory(minigameUtil.menuGetInventory());
         player.getOpenInventory().getTopInventory().setItem(12, minigameUtil.createItem("§b§lSnake", Material.SUNFLOWER, Collections.singletonList("§7§oClick here to play snake!")));
         player.getOpenInventory().getTopInventory().setItem(14, minigameUtil.createItem("§b§lEnergy Factory", Material.REDSTONE_TORCH, Arrays.asList("§7§oClick here to open", "§7§oyour energy factory!")));
-        addSameItemRange(player, 0, 11, "§r", Material.GRAY_STAINED_GLASS_PANE, Collections.singletonList(""));
-        player.getOpenInventory().getTopInventory().setItem(13,  minigameUtil.createItem( "§r", Material.GRAY_STAINED_GLASS_PANE, Collections.singletonList("")));
-        addSameItemRange(player, 15, 26, "§r", Material.GRAY_STAINED_GLASS_PANE, Collections.singletonList(""));
+        addSameItemRange(player, 0, 11, "§r", Material.GRAY_STAINED_GLASS_PANE, null);
+        player.getOpenInventory().getTopInventory().setItem(13,  minigameUtil.createItem( "§r", Material.GRAY_STAINED_GLASS_PANE, null));
+        addSameItemRange(player, 15, 26, "§r", Material.GRAY_STAINED_GLASS_PANE, null);
     }
 
     @SuppressWarnings("SameParameterValue")

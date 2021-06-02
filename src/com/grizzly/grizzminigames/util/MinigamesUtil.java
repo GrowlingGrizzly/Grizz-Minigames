@@ -2,6 +2,8 @@ package com.grizzly.grizzminigames.util;
 
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzmain.util.ConfigMaker;
+import com.grizzly.grizzminigames.GrizzMinigames;
+import com.grizzly.grizzminigames.minigames.EnergyFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import java.util.*;
 public class MinigamesUtil implements InventoryHolder {
 
     Grizz plugin = Grizz.pluginMain;
+    GrizzMinigames pluginMinigames = GrizzMinigames.pluginMinigames;
     GameMessagesUtil msgs = new GameMessagesUtil();
     public DecimalFormat formatBalance = new DecimalFormat("#,##0");
 
@@ -151,27 +154,19 @@ public class MinigamesUtil implements InventoryHolder {
             return true;
         }
 
-        if (args.length > 0) {
-            try {
-                playerBet.remove(uuid);
-                args[0] = args[0].toLowerCase().replaceAll("k", "000").replaceAll("m", "000000").replaceAll("b", "000000000").replaceAll("t", "000000000000");
-                playerBet.put(uuid, Double.parseDouble(args[0]));
-            } catch (Exception e) {
-                player.sendMessage(msgs.invalidBet());
-                return true;
-            }
-            if (playerBet.get(uuid) < 1) {
-                if (!ignoreBet) {
-                    player.sendMessage(msgs.minBet());
-                    return true;
-                }
-            }
-            if (playerBet.get(uuid) > getTokens(player)) {
-                if (!ignoreBet) {
-                    player.sendMessage(msgs.tooHighBet(player));
-                    return true;
-                }
-            }
+        try {
+            playerBet.remove(uuid);
+            args[0] = args[0].toLowerCase().replaceAll("k", "000").replaceAll("m", "000000").replaceAll("b", "000000000").replaceAll("t", "000000000000");
+            playerBet.put(uuid, Double.parseDouble(args[0]));
+        } catch (Exception e) {
+            player.sendMessage(msgs.invalidBet());
+            return true;
+        } if (playerBet.get(uuid) < 1 && !ignoreBet) {
+            player.sendMessage(msgs.minBet());
+            return true;
+        } if (playerBet.get(uuid) > getTokens(player) && !ignoreBet) {
+            player.sendMessage(msgs.tooHighBet(player));
+            return true;
         }
         return false;
     }
@@ -272,11 +267,26 @@ public class MinigamesUtil implements InventoryHolder {
         } return num;
     }
 
+    public void addEnergy(Player player, double amount) {
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
+        getUserData.set("Minigames-Addon.Energy-Factory.Energy", (getUserData.getDouble("Minigames-Addon.Energy-Factory.Energy") + amount));
+        getUserData.save();
+        new EnergyFactory().setEnergy(player);
+    }
+
+    public void removeEnergy(Player player, int amount) {
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
+        getUserData.set("Minigames-Addon.Energy-Factory.Energy", (getUserData.getDouble("Minigames-Addon.Energy-Factory.Energy") - amount));
+        getUserData.save();
+        new EnergyFactory().setEnergy(player);
+    }
+
+
     public ItemStack createItem(String name, Material mat, List<String> lore) {
         ItemStack item = new ItemStack(mat, 1);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        meta.setLore(lore);
+        if (lore != null) meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
     }
@@ -287,9 +297,10 @@ public class MinigamesUtil implements InventoryHolder {
     private Inventory menuInventoryCreation() { return Bukkit.createInventory(this, 27, "§2§lMinigames"); }
     public Inventory menuGetInventory() { return menuInventoryCreation(); }
 
+    private Inventory energyInventoryCreation() { return Bukkit.createInventory(this, 45, "  §e⚡⚡⚡ §a§lEnergy Factory §e⚡⚡⚡"); }
+    public Inventory energyGetInventory() { return energyInventoryCreation(); }
+
     @Override
-    public Inventory getInventory() {
-        return null;
-    }
+    public Inventory getInventory() { return null; }
 
 }
