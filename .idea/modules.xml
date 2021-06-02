@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Grizz/Grizz.iml" filepath="$PROJECT_DIR$/../Grizz/Grizz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../GrizzChat/GrizzChat.iml" filepath="$PROJECT_DIR$/../GrizzChat/GrizzChat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GrizzMinigames.iml" filepath="$PROJECT_DIR$/GrizzMinigames.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../GrizzScoreboards/GrizzScoreboards.iml" filepath="$PROJECT_DIR$/../GrizzScoreboards/GrizzScoreboards.iml" />
+    </modules>
+  </component>
+</project>

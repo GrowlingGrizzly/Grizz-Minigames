@@ -1,0 +1,34 @@
+name: Grizz-Minigames
+version: 1.0
+author: Growling_Grizzly
+main: com.grizzly.grizzminigames.GrizzMinigames
+api-version: 1.16
+depend: [Grizz]
+commands:
+  headtest:
+    description: Head things
+    usage: /<command>
+  tokens:
+    description: Get how many tokens you have
+    usage: /<command> <player>
+  freetokens:
+    description: Get free tokens
+    usage: /<command>
+  blackjack:
+    description: Play Blackjack
+    usage: /<command> <bet>
+  highlow:
+    description: Play Highlow
+    usage: /<command> <bet>
+  aceydoucey:
+    description: Play Aceydoucey
+    usage: /<command> <bet>
+  minigamehistory:
+    description: Show history for minigames.
+    usage: /<command> <player>
+  #snake:
+  #  description: snek.
+  #  usage: /<command>
+  minigames:
+    description: Open the minigame menu.
+    usage: /<command>
