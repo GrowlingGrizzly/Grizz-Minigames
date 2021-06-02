@@ -26,9 +26,6 @@ commands:
   minigamehistory:
     description: Show history for minigames.
     usage: /<command> <player>
-  #snake:
-  #  description: snek.
-  #  usage: /<command>
   minigames:
     description: Open the minigame menu.
     usage: /<command>

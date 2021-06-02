@@ -3,7 +3,7 @@ package com.grizzly.grizzminigames.events;
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzminigames.GrizzMinigames;
 import com.grizzly.grizzminigames.commands.CmdMinigameMenu;
-import com.grizzly.grizzminigames.commands.Snake;
+import com.grizzly.grizzminigames.Minigames.Snake;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
