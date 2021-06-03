@@ -29,3 +29,6 @@ commands:
   minigames:
     description: Open the minigame menu.
     usage: /<command>
+  customnumbersystem:
+    description: Test number system
+    usage: /<command>

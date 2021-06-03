@@ -35,6 +35,7 @@ public class GrizzMinigames extends JavaPlugin {
         getCommand("freetokens").setExecutor(new CmdFreeTokens());
         getCommand("aceydoucey").setExecutor(new CmdAceyDoucey());
         getCommand("minigames").setExecutor(new CmdMinigameMenu());
+        getCommand("customnumbersystem").setExecutor(new CmdCustomNumberSystem());
 
         Bukkit.getScheduler().runTask(pluginMinigames, () -> getServer().getOnlinePlayers().forEach(player -> new MinigameMenuEvents().checkInventory(player)));
 
