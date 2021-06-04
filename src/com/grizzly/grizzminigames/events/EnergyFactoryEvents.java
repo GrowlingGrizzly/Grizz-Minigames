@@ -1,7 +1,10 @@
 package com.grizzly.grizzminigames.events;
 
+import com.grizzly.grizzmain.Grizz;
+import com.grizzly.grizzmain.util.ConfigMaker;
 import com.grizzly.grizzminigames.GrizzMinigames;
 import com.grizzly.grizzminigames.commands.CmdMinigameMenu;
+import com.grizzly.grizzminigames.minigames.EnergyFactory;
 import com.grizzly.grizzminigames.util.MinigamesUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public class EnergyFactoryEvents implements Listener {
+    Grizz plugin = Grizz.pluginMain;
     GrizzMinigames pluginMinigames = GrizzMinigames.pluginMinigames;
     MinigamesUtil minigame = new MinigamesUtil();
 
@@ -26,6 +29,7 @@ public class EnergyFactoryEvents implements Listener {
     @EventHandler
     public void onClickItem(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
 
         if (player.getOpenInventory().getTitle().contains("§a§lEnergy Factory")) {
             if (e.getRawSlot() == 22) {
@@ -34,10 +38,13 @@ public class EnergyFactoryEvents implements Listener {
                 double currentTick = time.getNano()/1000000.0/50.0;
 
                 if (!String.valueOf(e.getClick()).equals("DOUBLE_CLICK") && !String.valueOf(e.getClick()).equals("NUMBER_KEY"))
-                    if (!oldTick.containsKey(player.getUniqueId()) || currentTick - oldTick.get(player.getUniqueId()) > 1.53 || currentTick - oldTick.get(player.getUniqueId()) < -1.53) {
+                    if (!oldTick.containsKey(player.getUniqueId()) || currentTick - oldTick.get(player.getUniqueId()) > 0.7 || currentTick - oldTick.get(player.getUniqueId()) < -0.7) {
 
-                        minigame.addEnergy(player, null, "1");
-                    }oldTick.put(player.getUniqueId(), currentTick);
+                        getUserData.set("Minigames-Addon.Energy-Factory.Energy", minigame.addEnergy(player, null, "1"));
+                        getUserData.save();
+                        new EnergyFactory().setEnergy(player);
+
+                    } oldTick.put(player.getUniqueId(), currentTick);
             } e.setCancelled(true);
         }
     }

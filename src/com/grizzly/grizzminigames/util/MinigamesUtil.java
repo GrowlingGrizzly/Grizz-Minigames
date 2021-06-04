@@ -3,7 +3,6 @@ package com.grizzly.grizzminigames.util;
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzmain.util.ConfigMaker;
 import com.grizzly.grizzminigames.GrizzMinigames;
-import com.grizzly.grizzminigames.minigames.EnergyFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -106,16 +105,12 @@ public class MinigamesUtil implements InventoryHolder {
                 case 1: suit = "♣"; break;
                 case 2: suit = "♥"; break;
                 case 3: suit = "♦"; break;
-            }
-            for (int i2 = 2; i2 < 11; i2++) deck = deck.replaceAll(i2 + "\\." + suit, formatCard(format, String.valueOf(i2), suit));
+            } for (int i2 = 2; i2 < 11; i2++) deck = deck.replaceAll(i2 + "\\." + suit, formatCard(format, String.valueOf(i2), suit));
             for (String card : new String[]{"A", "J", "Q", "K"}) deck = deck.replaceAll(card + "\\." + suit, formatCard(format, card, suit));
-        }
-        return deck;
+        } return deck;
     }
 
-    String formatCard(String format, String num, String suit) {
-        return format.replaceAll("N", num).replaceAll("S", suit);
-    }
+    String formatCard(String format, String num, String suit) { return format.replaceAll("N", num).replaceAll("S", suit); }
 
     public Boolean calculateCooldown(Player player, String game, Boolean forceStart) {
 
@@ -123,11 +118,8 @@ public class MinigamesUtil implements InventoryHolder {
 
         if (getLastTimeCmdUsed(player, game) != 0) {
             double date = formatDateToInt();
-            if (date - getLastTimeCmdUsed(player, game) > coolDownAmount) {
-                setLastTimeCmdUsed(player, game, date);
-            } else if (forceStart) {
-                setLastTimeCmdUsed(player, game, date);
-            } else {
+            if (date - getLastTimeCmdUsed(player, game) > coolDownAmount) setLastTimeCmdUsed(player, game, date);
+            else if (forceStart) setLastTimeCmdUsed(player, game, date); else {
                 double timeRemaining = getLastTimeCmdUsed(player, game) - date + coolDownAmount;
                 int hrAmount = (int) (timeRemaining / 3600);
                 int minAmount = (int) ((timeRemaining - (hrAmount * 3600)) / 60);
@@ -143,8 +135,7 @@ public class MinigamesUtil implements InventoryHolder {
 
         else if (getLastTimeCmdUsed(player, game) == 0) {
             setLastTimeCmdUsed(player, game, formatDateToInt());
-        }
-        return false;
+        } return false;
     }
 
     public Boolean getBet(Player player, HashMap<UUID, Double> playerBet, String[] args, Boolean ignoreBet) {
@@ -168,8 +159,7 @@ public class MinigamesUtil implements InventoryHolder {
         } if (playerBet.get(uuid) > getTokens(player) && !ignoreBet) {
             player.sendMessage(msgs.tooHighBet(player));
             return true;
-        }
-        return false;
+        } return false;
     }
 
     public int getCardValueDifferentFaceValues(String card) {
@@ -189,8 +179,7 @@ public class MinigamesUtil implements InventoryHolder {
             case "Q": cardValue = 12; break;
             case "K": cardValue = 13; break;
             default: cardValue = 0; break;
-        }
-        return cardValue;
+        } return cardValue;
     }
 
     public boolean logGames() { return plugin.getMinigame().getBoolean("Minigame-Log.Log-Games"); }
@@ -204,8 +193,7 @@ public class MinigamesUtil implements InventoryHolder {
                     if (player.hasPermission(permNode)) return true;
                 }
             }
-        }
-        return false;
+        } return false;
     }
 
     public String getHelpMessage(Boolean firstTime, String game) {
@@ -215,9 +203,7 @@ public class MinigamesUtil implements InventoryHolder {
         for (int i = 0; i < plugin.getMessage().getStringList(game + ".Help").toArray().length; i++) {
             sb.append((helpMsg.get(i)));
             sb.append('\n');
-        }
-
-        if (firstTime) sb.append("\n&f ");
+        } if (firstTime) sb.append("\n&f ");
 
         return plugin.aDR(sb.toString());
     }
@@ -232,11 +218,9 @@ public class MinigamesUtil implements InventoryHolder {
                 case 1: suit = "♣"; break;
                 case 2: suit = "♥"; break;
                 case 3: suit = "♦"; break;
-            }
-            for (int i2 = 2; i2 < 11; i2++) Collections.replaceAll(deck, i2 + "." + suit, String.valueOf(i2));
+            } for (int i2 = 2; i2 < 11; i2++) Collections.replaceAll(deck, i2 + "." + suit, String.valueOf(i2));
             for (String card : new String[]{"A", "J", "Q", "K"}) Collections.replaceAll(deck, card + "." + suit, card);
-        }
-        return deck;
+        } return deck;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -249,11 +233,9 @@ public class MinigamesUtil implements InventoryHolder {
                 case 1: suit = "♣"; break;
                 case 2: suit = "♥"; break;
                 case 3: suit = "♦"; break;
-            }
-            for (int i2 = 2; i2 < 11; i2++) Collections.replaceAll(deck, i2 + "." + suit, i2 + suit);
+            } for (int i2 = 2; i2 < 11; i2++) Collections.replaceAll(deck, i2 + "." + suit, i2 + suit);
             for (String card : new String[]{"A", "J", "Q", "K"}) Collections.replaceAll(deck, card + "." + suit, card + suit);
-        }
-        return deck;
+        } return deck;
     }
 
     public Integer checkNextLogSpace(Player player) {
@@ -268,107 +250,13 @@ public class MinigamesUtil implements InventoryHolder {
         } return num;
     }
 
-    /*public void addEnergy(Player player, long amount) {
-        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
-
-        char[] number = getUserData.getString("Minigames-Addon.Energy-Factory.Energy").toCharArray();
-
-        if (number.length < String.valueOf(amount).length()) {
-            long zeroAmount = String.valueOf(amount).length() - number.length;
-            number = (String.valueOf((long) Math.pow(10, zeroAmount)).replaceAll("1", "") + getUserData.getString("Minigames-Addon.Energy-Factory.Energy")).toCharArray();
-        }
-
-        int numbersToGet = number.length - String.valueOf(amount).length();
-        char[] correctedNumber = Arrays.copyOfRange(number, numbersToGet, number.length);
-
-        player.sendMessage(Arrays.toString(number));
-        player.sendMessage(String.valueOf(correctedNumber));
-
-        long baseNum = Long.parseLong(String.valueOf(correctedNumber));
-        //long maxDigits = 10 ^ (String.valueOf(amount).length());
-        long maxDigits = (long) Math.pow(10, String.valueOf(amount).length());
-
-        if (baseNum + amount > maxDigits) {
-
-            player.sendMessage(baseNum + " + " + amount + " - " + maxDigits + " = " + (baseNum + amount - maxDigits));
-
-            char[] firstOutputNumber = String.valueOf(baseNum + amount - maxDigits).toCharArray();
-
-            if (firstOutputNumber.length < number.length) {
-                long zeroAmount = number.length - firstOutputNumber.length;
-                number = (String.valueOf((long) Math.pow(10, zeroAmount)).replaceAll("1", "") + getUserData.getString("Minigames-Addon.Energy-Factory.Energy")).toCharArray();
-            }
-
-
-            StringBuilder finalNumbers = new StringBuilder(String.valueOf(baseNum + amount - maxDigits));
-
-            while (String.valueOf(baseNum + amount).length()-1 > finalNumbers.length()) {
-                finalNumbers.insert(0, "0");
-            }
-
-            player.sendMessage(finalNumbers.toString());
-
-            int num = numbersToGet;
-            int currentNum;
-
-            for (int i = 9; i != 9;) {
-                currentNum = Integer.parseInt(String.valueOf(Arrays.copyOfRange(number, num-1, num)));
-                int currentNumSubtracted = Integer.parseInt(String.valueOf(Arrays.copyOfRange(firstOutputNumber, num-1, num)));
-                if (currentNum + currentNumSubtracted > 9) {
-                    i = 9;
-                    num--;
-                    finalNumbers.insert(0, "0");
-                }
-            }
-            currentNum = Integer.parseInt(String.valueOf(Arrays.copyOfRange(number, num-1, num)));
-            player.sendMessage(String.valueOf(currentNum + 1));
-            finalNumbers.insert(0, (currentNum + 1));
-
-            for (int i = num; i > 1; i--) {
-                int currentNumber = Integer.parseInt(String.valueOf(Arrays.copyOfRange(number, num-2, num-1)));
-                finalNumbers.insert(0, currentNumber);
-                num--;
-            }
-
-            player.sendMessage(finalNumbers.toString());
-            getUserData.set("Minigames-Addon.Energy-Factory.Energy", finalNumbers.toString());
-            getUserData.save();
-
-        } else {
-
-            StringBuilder finalNumbers = new StringBuilder(String.valueOf(baseNum + amount));
-            int num = numbersToGet;
-
-            for (int i = num; i > 0; i--) {
-                int currentNumber = Integer.parseInt(String.valueOf(Arrays.copyOfRange(number, num-1, num)));
-                finalNumbers.insert(0, currentNumber);
-                num--;
-            }
-
-            player.sendMessage(finalNumbers.toString());
-            getUserData.set("Minigames-Addon.Energy-Factory.Energy", finalNumbers.toString());
-            getUserData.save();
-        }
-        new EnergyFactory().setEnergy(player);
-    }*/
-
-    public void addEnergy(Player player, String baseAmount, String addAmount) {
-        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
-
-        boolean debugMode = true;
-
-        if (baseAmount == null) {
-            debugMode = false;
-            baseAmount = getUserData.getString("Minigames-Addon.Energy-Factory.Energy");
-        }
-
+    public String addNumbers(Player player, String baseAmount, String addAmount, boolean debugMode) {
         char[] storedNumber = baseAmount.toCharArray();
         char[] newAmount = addAmount.toCharArray();
 
-        StringBuilder finishedAmount = new StringBuilder("");
+        StringBuilder finishedAmount = new StringBuilder();
 
-        while (storedNumber.length < newAmount.length)
-            storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
+        while (storedNumber.length < newAmount.length) storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
         while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
 
         boolean plusOne = false;
@@ -385,29 +273,86 @@ public class MinigamesUtil implements InventoryHolder {
             if (debugMode) {
                 player.sendMessage(String.valueOf(plusOne));
                 player.sendMessage(base + " + " + add + " = " + (base + add));
-            }
-
-            if (base + add > 9) {
+            } if (base + add > 9) {
                 plusOne = true;
                 newNum = base + add - 10;
             } else {
                 plusOne = false;
                 newNum = base + add;
-            }
-            finishedAmount.insert(0, newNum);
-        }
-        if (plusOne) finishedAmount.insert(0, "1");
+            } finishedAmount.insert(0, newNum);
+        } if (plusOne) finishedAmount.insert(0, "1");
 
-        if (debugMode) player.sendMessage(finishedAmount.toString());
-        else {
-            getUserData.set("Minigames-Addon.Energy-Factory.Energy", finishedAmount.toString());
-            getUserData.save();
-            new EnergyFactory().setEnergy(player);
-        }
+        return finishedAmount.toString();
     }
 
-    public void removeEnergy(Player player, String baseAmount, String removeAmount) {
+    public String subtractNumbers(Player player, String baseAmount, String removeAmount, boolean debugMode) {
+        char[] storedNumber = baseAmount.toCharArray();
+        char[] newAmount = removeAmount.toCharArray();
 
+        while (storedNumber.length < newAmount.length)
+            storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
+        while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
+
+        if (debugMode) player.sendMessage(String.valueOf(storedNumber) + "\n" + String.valueOf(newAmount));
+
+        StringBuilder finishedAmount = subtractLoop(player, debugMode, newAmount, storedNumber);
+
+        if (String.valueOf(finishedAmount.toString().toCharArray()[0]).equalsIgnoreCase("Y")) {
+
+            finishedAmount = subtractLoop(player, debugMode, storedNumber, newAmount);
+            finishedAmount.deleteCharAt(0);
+            finishedAmount.insert(0, "-");
+
+        } else finishedAmount.deleteCharAt(0);
+
+        return finishedAmount.toString();
+    }
+
+    public String addEnergy(Player player, String baseAmount, String addAmount) {
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
+        boolean debugMode = true;
+
+        if (baseAmount == null) {
+            debugMode = false;
+            baseAmount = getUserData.getString("Minigames-Addon.Energy-Factory.Energy");
+        } return addNumbers(player, baseAmount, addAmount, debugMode);
+    }
+
+    public String removeEnergy(Player player, String baseAmount, String removeAmount) {
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
+
+        boolean debugMode = true;
+
+        if (baseAmount == null) {
+            debugMode = false;
+            baseAmount = getUserData.getString("Minigames-Addon.Energy-Factory.Energy");
+        } return subtractNumbers(player, baseAmount, removeAmount, debugMode);
+    }
+
+    StringBuilder subtractLoop(Player player, Boolean debugMode, char[] newAmount, char[] storedNumber) {
+        StringBuilder finishedAmount = new StringBuilder();
+        boolean minusOne = false;
+
+        for (int i = newAmount.length - 1; i > -1; i--) {
+            int base = Integer.parseInt(String.valueOf(storedNumber[i]));
+            int subtract = Integer.parseInt(String.valueOf(newAmount[i]));
+            int newNum;
+
+            if (minusOne) subtract++;
+
+            if (debugMode) {
+                player.sendMessage(String.valueOf(minusOne));
+                player.sendMessage(base + " - " + subtract + " = " + (base - subtract));
+            } if (base - subtract < 0) {
+                minusOne = true;
+                newNum = (10 + base) - subtract;
+            } else {
+                minusOne = false;
+                newNum = base - subtract;
+            } finishedAmount.insert(0, newNum);
+        } if (!minusOne) finishedAmount.insert(0, "N");
+        else finishedAmount.insert(0, "Y");
+        return finishedAmount;
     }
 
 
