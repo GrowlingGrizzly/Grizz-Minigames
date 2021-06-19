@@ -27,7 +27,7 @@ public class MinigameMenuEvents implements Listener {
     Snake snake = new Snake();
     EnergyFactory factory = new EnergyFactory();
     static HashMap<UUID, Boolean> minigameRunning = new HashMap<>();
-
+    static HashMap<UUID, Boolean> giveItems = new HashMap<>();
     public void setGameRunning(Player player) { minigameRunning.put(player.getUniqueId(), true); }
     public void setGameEnded(Player player) { minigameRunning.remove(player.getUniqueId()); }
 
@@ -36,16 +36,32 @@ public class MinigameMenuEvents implements Listener {
         Player player = (Player) e.getWhoClicked();
         if (player.getOpenInventory().getTitle().equals("§2§lMinigames")) {
             if (e.getRawSlot() == 12) {
-                setGameRunning(player);
+                giveItems.put(player.getUniqueId(), false);
                 player.closeInventory();
-                snake.runSnake(player);
-            }
-            if (e.getRawSlot() == 14) {
+                snake.snakeSpeedMenu(player);
+            } if (e.getRawSlot() == 14) {
+                giveItems.put(player.getUniqueId(), true);
                 setGameRunning(player);
                 player.closeInventory();
                 factory.runFactory(player);
-            }
-            e.setCancelled(true);
+            } e.setCancelled(true);
+        } if (player.getOpenInventory().getTitle().equals("§a§lSnake Speed Selector")) {
+            if (e.getRawSlot() == 11 && plugin.getMinigame().getInt("Snake.Speed.Slow") > 0) {
+                setGameRunning(player);
+                giveItems.put(player.getUniqueId(), true);
+                snake.setSnakeSpeed(player, 0);
+                snake.runSnake(player);
+            } if (e.getRawSlot() == 13 && plugin.getMinigame().getInt("Snake.Speed.Medium") > 0) {
+                setGameRunning(player);
+                giveItems.put(player.getUniqueId(), true);
+                snake.setSnakeSpeed(player, 1);
+                snake.runSnake(player);
+            } if (e.getRawSlot() == 15 && plugin.getMinigame().getInt("Snake.Speed.Fast") > 0) {
+                setGameRunning(player);
+                giveItems.put(player.getUniqueId(), true);
+                snake.setSnakeSpeed(player, 2);
+                snake.runSnake(player);
+            } e.setCancelled(true);
         }
     }
 
@@ -53,6 +69,7 @@ public class MinigameMenuEvents implements Listener {
     public void onOpenInventory(InventoryOpenEvent e) {
 
         Player player = (Player) e.getPlayer();
+        giveItems.putIfAbsent(player.getUniqueId(), true);
         ConfigMaker inventoryBackup = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/minigames/inventory-backup/");
 
         if (e.getView().getTitle().equals("§2§lMinigames")) {
@@ -66,7 +83,7 @@ public class MinigameMenuEvents implements Listener {
     public void onCloseInventory(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
         ConfigMaker inventoryBackup = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/minigames/inventory-backup/");
-        if (e.getView().getTitle().equals("§2§lMinigames") && inventoryBackup.contains("Inventory"))
+        if (e.getView().getTitle().equals("§2§lMinigames") && (inventoryBackup.contains("Inventory")) && giveItems.get(player.getUniqueId()))
             Bukkit.getScheduler().runTaskLater(pluginMinigames, () -> {
                 if (minigameRunning.get(player.getUniqueId()) == null || !minigameRunning.get(player.getUniqueId())) loadInventory(player); }, 2 );
     }
@@ -75,9 +92,7 @@ public class MinigameMenuEvents implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         ConfigMaker inventoryBackup = new ConfigMaker(Grizz.pluginMain, String.valueOf(e.getPlayer().getUniqueId()), plugin.getDataFolder() + "/minigames/inventory-backup/");
-        if (inventoryBackup.contains("Inventory")) {
-            loadInventory(e.getPlayer());
-        }
+        if (inventoryBackup.contains("Inventory")) loadInventory(e.getPlayer());
     }
 
     void saveInventory(Player player) {
@@ -90,8 +105,7 @@ public class MinigameMenuEvents implements Listener {
     public void loadInventory(Player player) {
         ConfigMaker inventoryBackup = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/minigames/inventory-backup/");
         player.getInventory().setStorageContents(null);
-        @SuppressWarnings("unchecked")
-        List<ItemStack> itemList = (List<ItemStack>) inventoryBackup.get("Inventory");
+        @SuppressWarnings("unchecked") List<ItemStack> itemList = (List<ItemStack>) inventoryBackup.get("Inventory");
         ItemStack[] items = itemList.toArray(new ItemStack[0]);
         player.getInventory().setStorageContents(items);
         inventoryBackup.set("Inventory", null);
@@ -102,5 +116,9 @@ public class MinigameMenuEvents implements Listener {
     public void checkInventory(Player player) {
         ConfigMaker inventoryBackup = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/minigames/inventory-backup/");
         if (inventoryBackup.contains("Inventory")) loadInventory(player);
+    }
+
+    public void setGiveItems(Player player, boolean bool) {
+        giveItems.put(player.getUniqueId(), bool);
     }
 }

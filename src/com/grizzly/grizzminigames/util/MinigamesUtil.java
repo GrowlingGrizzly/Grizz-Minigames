@@ -365,8 +365,15 @@ public class MinigamesUtil implements InventoryHolder {
         return item;
     }
 
+    public void setFullInventoryItem(Player player, int size, String name, Material mat, List<String> lore) {
+        for (int slot = 0; slot < size; slot++) player.getOpenInventory().getTopInventory().setItem(slot, createItem(name, mat, lore));
+    }
+
     private Inventory snakeInventoryCreation() { return Bukkit.createInventory(this, 54, "§c§lSnake"); }
     public Inventory snakeGetInventory() { return snakeInventoryCreation(); }
+
+    private Inventory snakeSpeedInventoryCreation() { return Bukkit.createInventory(this, 27, "§a§lSnake Speed Selector"); }
+    public Inventory snakeSpeedGetInventory() { return snakeSpeedInventoryCreation(); }
 
     private Inventory menuInventoryCreation() { return Bukkit.createInventory(this, 27, "§2§lMinigames"); }
     public Inventory menuGetInventory() { return menuInventoryCreation(); }

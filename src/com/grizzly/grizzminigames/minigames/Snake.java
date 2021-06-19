@@ -14,6 +14,7 @@ public class Snake {
     GrizzMinigames pluginMinigames = GrizzMinigames.pluginMinigames;
     Grizz plugin = Grizz.pluginMain;
     MinigamesUtil minigame = new MinigamesUtil();
+    public static HashMap<UUID, Integer> snakeSpeed = new HashMap<>();
     public static HashMap<UUID, Boolean> gameOver = new HashMap<>();
     public static HashMap<UUID, Integer> playerScore = new HashMap<>();
     public static HashMap<UUID, Integer> headX = new HashMap<>();
@@ -27,6 +28,18 @@ public class Snake {
     public static HashMap<UUID, Integer[]> snakeHead = new HashMap<>();
     public static HashMap<UUID, ArrayList<Integer[]>> snakeList = new HashMap<>();
     public static HashMap<UUID, String> endType = new HashMap<>();
+
+    public void snakeSpeedMenu(Player player) {
+        player.openInventory(minigame.snakeSpeedGetInventory());
+        minigame.setFullInventoryItem(player, 27, "§r", Material.GRAY_STAINED_GLASS_PANE, null);
+        player.getOpenInventory().getTopInventory().setItem(11, minigame.createItem("§a§lSlow", Material.LIME_CONCRETE, Arrays.asList("§3Click here to set your speed to Slow!", "§7§oSnake updates once every " + plugin.getMinigame().getInt("Snake.Speed.Slow")/20.0 + " seconds")));
+        player.getOpenInventory().getTopInventory().setItem(13, minigame.createItem("§e§lMedium", Material.YELLOW_CONCRETE, Arrays.asList("§3Click here to set your speed to Medium!", "§7§oSnake updates once every " + plugin.getMinigame().getInt("Snake.Speed.Medium")/20.0 + " seconds")));
+        player.getOpenInventory().getTopInventory().setItem(15, minigame.createItem("§c§lFast", Material.RED_CONCRETE, Arrays.asList("§3Click here to set your speed to Fast!", "§7§oSnake updates once every " + plugin.getMinigame().getInt("Snake.Speed.Fast")/20.0 + " seconds")));
+        if (plugin.getMinigame().getInt("Snake.Speed.Slow") < 1) player.getOpenInventory().getTopInventory().setItem(11, minigame.createItem("§a§lSlow", Material.LIME_CONCRETE, Arrays.asList("§3Click here to set your speed to Slow!", "§cUnable to choose as speed is invalid.")));
+        if (plugin.getMinigame().getInt("Snake.Speed.Medium") < 1) player.getOpenInventory().getTopInventory().setItem(13, minigame.createItem("§e§lMedium", Material.YELLOW_CONCRETE, Arrays.asList("§3Click here to set your speed to Medium!", "§cUnable to choose as speed is invalid.")));
+        if (plugin.getMinigame().getInt("Snake.Speed.Fast") < 1) player.getOpenInventory().getTopInventory().setItem(15, minigame.createItem("§c§lFast", Material.RED_CONCRETE, Arrays.asList("§3Click here to set your speed to Fast!", "§cUnable to choose as speed is invalid.")));
+    }
+
 
     public void runSnake(Player player) {
 
@@ -44,43 +57,46 @@ public class Snake {
         endType.put(uuid, "quit");
         player.openInventory(minigame.snakeGetInventory());
 
-            addFood(player, true);
+        int speed = 7;
+        if (snakeSpeed.get(uuid) != null) switch (snakeSpeed.get(uuid)) {
+            case 0: speed = plugin.getMinigame().getInt("Snake.Speed.Slow"); break;
+            case 1: speed = plugin.getMinigame().getInt("Snake.Speed.Medium"); break;
+            case 2: speed = plugin.getMinigame().getInt("Snake.Speed.Fast"); break;
+        } addFood(player, true);
 
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    try {
-                        if (gameOver.get(uuid)) cancel();
-                        else {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    if (gameOver.get(uuid)) cancel();
+                    else {
 
-                            int y1Change = 0;
-                            int x1Change = 0;
+                        int y1Change = 0;
+                        int x1Change = 0;
 
-                            if (up.get(uuid)) y1Change = 1;
-                            if (down.get(uuid)) y1Change = -1;
-                            if (left.get(uuid)) x1Change = -1;
-                            if (right.get(uuid)) x1Change = 1;
+                        if (up.get(uuid)) y1Change = 1;
+                        if (down.get(uuid)) y1Change = -1;
+                        if (left.get(uuid)) x1Change = -1;
+                        if (right.get(uuid)) x1Change = 1;
 
-                            headX.put(uuid, headX.get(uuid) + x1Change);
-                            headY.put(uuid, headY.get(uuid) + y1Change);
+                        headX.put(uuid, headX.get(uuid) + x1Change);
+                        headY.put(uuid, headY.get(uuid) + y1Change);
 
-                            if (0 > headX.get(uuid) || headX.get(uuid) > 8 || 0 > headY.get(uuid) || headY.get(uuid) > 5) {
-                                endType.put(uuid, "wall");
-                                gameEnd(player);
-                                cancel();
-                            }
-                            setSnake(player);
-                        }
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        if (!gameOver.get(uuid)) {
-                            player.sendMessage("§cAn error occured, so the game was force shut.");
+                        if (0 > headX.get(uuid) || headX.get(uuid) > 8 || 0 > headY.get(uuid) || headY.get(uuid) > 5) {
+                            endType.put(uuid, "wall");
                             gameEnd(player);
-                        }
-                        player.closeInventory();
-                        cancel();
+                            cancel();
+                        } setSnake(player);
                     }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    if (!gameOver.get(uuid)) {
+                        player.sendMessage("§cAn error occured, so the game was force shut.");
+                        gameEnd(player);
+                    } player.closeInventory();
+                    cancel();
                 }
-            }.runTaskTimer(pluginMinigames, 0, plugin.getMinigame().getInt("Snake.Snake-Speed"));
+            }
+        }.runTaskTimer(pluginMinigames, 0, speed);
     }
 
     public void gameEnd(Player player) {
@@ -90,17 +106,14 @@ public class Snake {
     }
 
     void addFood(Player player, boolean firstStart) {
-        if (firstStart) do {
+        if (firstStart) do
             if (!gameOver.get(player.getUniqueId())) {
                 foodX.put(player.getUniqueId(), new Random().nextInt(8));
                 foodY.put(player.getUniqueId(), new Random().nextInt(5));
-            }
-        } while (foodX.get(player.getUniqueId()) == 4 && foodY.get(player.getUniqueId()) == 2);
-        else {
-            if (!gameOver.get(player.getUniqueId())) {
-                foodX.put(player.getUniqueId(), new Random().nextInt(8));
-                foodY.put(player.getUniqueId(), new Random().nextInt(5));
-            }
+            } while (foodX.get(player.getUniqueId()) == 4 && foodY.get(player.getUniqueId()) == 2);
+        else if (!gameOver.get(player.getUniqueId())) {
+            foodX.put(player.getUniqueId(), new Random().nextInt(8));
+            foodY.put(player.getUniqueId(), new Random().nextInt(5));
         }
     }
 
@@ -125,21 +138,18 @@ public class Snake {
 
             if (snakeList.get(uuid).toArray().length > playerScore.get(uuid)+1) snakeList.get(uuid).remove(0);
 
-            for (int i = 0; i < snakeList.get(uuid).toArray().length-1; i++) {
+            for (int i = 0; i < snakeList.get(uuid).toArray().length-1; i++)
                 if (Arrays.toString(snakeList.get(uuid).get(i)).equals(Arrays.toString(snakeHead.get(uuid)))) {
                     endType.put(uuid, "self");
                     setGameOver(player);
                     gameEnd(player);
                 }
-            }
             for (int i = 0; i < snakeList.get(uuid).toArray().length-1; i++) player.getOpenInventory().getTopInventory().setItem((snakeList.get(uuid).get(i)[0] + setSnakeArrayY(snakeList.get(uuid).get(i)[1])), minigame.createItem("§aSnake Body", Material.LIME_WOOL, Collections.singletonList("§7§oPart of your snake!")));
 
             player.getOpenInventory().getTopInventory().setItem((headX.get(uuid) + setY(player, true)), minigame.createItem("§2Snake Head", Material.GREEN_WOOL, Collections.singletonList("§7§oPart of your snake!")));
 
+            while (player.getOpenInventory().getTopInventory().getItem((foodX.get(uuid) + setY(player, false))) != null) addFood(player, false);
 
-            while (player.getOpenInventory().getTopInventory().getItem((foodX.get(uuid) + setY(player, false))) != null) {
-                addFood(player, false);
-            }
             if (!(foodX.get(uuid) + setY(player, false) < 0)) player.getOpenInventory().getTopInventory().setItem((foodX.get(uuid) + setY(player, false)), minigame.createItem("§eSnake Food", Material.SUNFLOWER, Collections.singletonList("§7§oEat this to grow your snake!")));
         }
     }
@@ -175,5 +185,6 @@ public class Snake {
     public void setDown(Player player) { directionBase(player, false, true, false, false); }
     public void setLeft(Player player) { directionBase(player, false, false, true, false); }
     public void setRight(Player player) { directionBase(player, false, false, false, true); }
+    public void setSnakeSpeed(Player player, int speed) { snakeSpeed.put(player.getUniqueId(), speed); }
 
 }

@@ -44,7 +44,7 @@ public class CmdMinigameHistory implements TabExecutor {
                         return true;
                     }
 
-                    int num = minigamesUtil.checkNextLogSpace(player) - 1 - (page * 3);
+                    int num = minigamesUtil.checkNextLogSpace(target) - 1 - (page * 3);
                     String historyMsg = getHistoryMessage().replaceAll("%page%", String.valueOf(page+1));
                     String historyList = "";
 
@@ -93,7 +93,7 @@ public class CmdMinigameHistory implements TabExecutor {
 
             StringBuilder sb = new StringBuilder();
 
-            ConfigMaker playerDb = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/minigames/log/");
+            ConfigMaker playerDb = new ConfigMaker(Grizz.pluginMain, String.valueOf(target.getUniqueId()), plugin.getDataFolder() + "/minigames/log/");
             String gameDate = playerDb.getString(target.getName() + "." + num + ".Date");
             String gameType = playerDb.getString(target.getName() + "." + num + ".Type").toLowerCase();
             String gameBet = minigamesUtil.formatBalance.format(playerDb.getDouble(player.getName() + "." + num + ".Bet"));

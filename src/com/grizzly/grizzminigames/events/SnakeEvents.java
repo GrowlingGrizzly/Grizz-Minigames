@@ -21,7 +21,6 @@ public class SnakeEvents implements Listener {
     @EventHandler
     public void onClickItem(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-
         if (player.getOpenInventory().getTitle().equals("§c§lSnake")) {
             if (e.getRawSlot() == 58) snake.setUp(player);
             if (e.getRawSlot() == 66) snake.setLeft(player);
@@ -33,28 +32,30 @@ public class SnakeEvents implements Listener {
 
     @EventHandler
     public void onOpenInventory(InventoryOpenEvent e) {
-
         Player player = (Player) e.getPlayer();
         if (e.getView().getTitle().equals("§c§lSnake")) {
             player.getInventory().setStorageContents(null);
             Bukkit.getScheduler().runTaskLater(pluginMinigames, () -> addArrows(player), 3);
         }
-
     }
 
     @EventHandler
     public void onCloseInventory(InventoryCloseEvent e) {
         Player player = (Player) e.getPlayer();
+        boolean minigameRunning = false;
+        if (MinigameMenuEvents.minigameRunning.get(player.getUniqueId()) != null) minigameRunning = MinigameMenuEvents.minigameRunning.get(player.getUniqueId());
         if (e.getView().getTitle().equals("§c§lSnake")) {
             String endType;
             switch (snake.getEndType(player)) {
                 case "self": endType = "§cYou hit yourself!"; break;
                 case "wall": endType = "§cYou hit the wall!"; break;
                 default: endType = "§cYou quit the game!"; break;
-            }
-            player.sendMessage(endType + " Score: §6" + snake.getPlayerScore(player));
+            } player.sendMessage(endType + " Score: §6" + snake.getPlayerScore(player));
             snake.setGameOver(player);
             new MinigameMenuEvents().setGameEnded(player);
+            Bukkit.getScheduler().runTaskLater(pluginMinigames, () -> new CmdMinigameMenu().openInventory(player), 1);
+        } if (player.getOpenInventory().getTitle().equals("§a§lSnake Speed Selector") && !minigameRunning) {
+            new MinigameMenuEvents().setGiveItems(player, true);
             Bukkit.getScheduler().runTaskLater(pluginMinigames, () -> new CmdMinigameMenu().openInventory(player), 1);
         }
     }
