@@ -15,11 +15,8 @@ public class EnergyFactory {
     static ConfigMaker getUserData(Player player) { return new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), Grizz.pluginMain.getDataFolder() + "/userdata/"); }
 
     public void runFactory(Player player) {
+        if (!getUserData(player).contains("Minigames-Addon.Energy-Factory.Energy")) minigame.setEnergy(player, "0");
 
-        if (!getUserData(player).contains("Minigames-Addon.Energy-Factory")) {
-            getUserData(player).set("Minigames-Addon.Energy-Factory.Energy", "0");
-            getUserData(player).save();
-        }
         player.openInventory(minigame.energyGetInventory());
         setEnergy(player);
        }

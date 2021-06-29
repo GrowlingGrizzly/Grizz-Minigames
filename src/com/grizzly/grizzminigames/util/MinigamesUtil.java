@@ -271,8 +271,8 @@ public class MinigamesUtil implements InventoryHolder {
             if (plusOne) add++;
 
             if (debugMode) {
-                player.sendMessage(String.valueOf(plusOne));
-                player.sendMessage(base + " + " + add + " = " + (base + add));
+                player.sendMessage("§3Previous > 10: §a" + plusOne);
+                player.sendMessage("§3Current Formula: §a" + base + " + " + add + " = " + (base + add));
             } if (base + add > 9) {
                 plusOne = true;
                 newNum = base + add - 10;
@@ -281,7 +281,7 @@ public class MinigamesUtil implements InventoryHolder {
                 newNum = base + add;
             } finishedAmount.insert(0, newNum);
         } if (plusOne) finishedAmount.insert(0, "1");
-
+        if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + finishedAmount.toString());
         return finishedAmount.toString();
     }
 
@@ -293,41 +293,41 @@ public class MinigamesUtil implements InventoryHolder {
             storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
         while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
 
-        if (debugMode) player.sendMessage(String.valueOf(storedNumber) + "\n" + String.valueOf(newAmount));
+        if (debugMode) player.sendMessage("§3Base: §a" + String.valueOf(storedNumber) + "\n§3Subtract: §a" + String.valueOf(newAmount));
 
         StringBuilder finishedAmount = subtractLoop(player, debugMode, newAmount, storedNumber);
 
         if (String.valueOf(finishedAmount.toString().toCharArray()[0]).equalsIgnoreCase("Y")) {
-
+            if (debugMode) player.sendMessage("§3Swapping final number to negative...");
             finishedAmount = subtractLoop(player, debugMode, storedNumber, newAmount);
             finishedAmount.deleteCharAt(0);
             finishedAmount.insert(0, "-");
+            while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0")) finishedAmount.deleteCharAt(1);
+        } else {
+            while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0")) finishedAmount.deleteCharAt(1);
+            finishedAmount.deleteCharAt(0);
+        }
 
-        } else finishedAmount.deleteCharAt(0);
-
+        if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + finishedAmount.toString());
         return finishedAmount.toString();
     }
 
-    public String addEnergy(Player player, String baseAmount, String addAmount) {
+    public void setEnergy(Player player, String amount) {
         ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
-        boolean debugMode = true;
-
-        if (baseAmount == null) {
-            debugMode = false;
-            baseAmount = getUserData.getString("Minigames-Addon.Energy-Factory.Energy");
-        } return addNumbers(player, baseAmount, addAmount, debugMode);
+        getUserData.set("Minigames-Addon.Energy-Factory.Energy", amount);
+        getUserData.save();
     }
 
-    public String removeEnergy(Player player, String baseAmount, String removeAmount) {
+    public void addEnergy(Player player, String addAmount) {
         ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
-
-        boolean debugMode = true;
-
-        if (baseAmount == null) {
-            debugMode = false;
-            baseAmount = getUserData.getString("Minigames-Addon.Energy-Factory.Energy");
-        } return subtractNumbers(player, baseAmount, removeAmount, debugMode);
+        setEnergy(player, addNumbers(player, getUserData.getString("Minigames-Addon.Energy-Factory.Energy"), addAmount, false));
     }
+
+    public void removeEnergy(Player player, String addAmount) {
+        ConfigMaker getUserData = new ConfigMaker(Grizz.pluginMain, String.valueOf(player.getUniqueId()), plugin.getDataFolder() + "/userdata/");
+        setEnergy(player, subtractNumbers(player, getUserData.getString("Minigames-Addon.Energy-Factory.Energy"), addAmount, false));
+    }
+
 
     StringBuilder subtractLoop(Player player, Boolean debugMode, char[] newAmount, char[] storedNumber) {
         StringBuilder finishedAmount = new StringBuilder();
@@ -341,8 +341,8 @@ public class MinigamesUtil implements InventoryHolder {
             if (minusOne) subtract++;
 
             if (debugMode) {
-                player.sendMessage(String.valueOf(minusOne));
-                player.sendMessage(base + " - " + subtract + " = " + (base - subtract));
+                player.sendMessage("§3Previous negative: §a" + minusOne);
+                player.sendMessage("§3Current Formula: §a" + base + " - " + subtract + " = " + (base - subtract));
             } if (base - subtract < 0) {
                 minusOne = true;
                 newNum = (10 + base) - subtract;

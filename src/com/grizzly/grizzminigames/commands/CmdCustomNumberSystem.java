@@ -35,8 +35,8 @@ public class CmdCustomNumberSystem implements TabExecutor {
                 return true;
             }
 
-            if (args[0].equalsIgnoreCase("add")) minigameUtil.addEnergy(player, args[1], args[2]);
-            else if (args[0].equalsIgnoreCase("subtract")) minigameUtil.removeEnergy(player, args[1], args[2]);
+            if (args[0].equalsIgnoreCase("add")) minigameUtil.addNumbers(player, args[1], args[2], true);
+            else if (args[0].equalsIgnoreCase("subtract")) minigameUtil.subtractNumbers(player, args[1], args[2], true);
             else if (args[0].equalsIgnoreCase("format")) player.sendMessage(new EnergyFactory().formatEnergy(args[1]));
             else player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract> <base> <adding/subtracting #>"));
         }

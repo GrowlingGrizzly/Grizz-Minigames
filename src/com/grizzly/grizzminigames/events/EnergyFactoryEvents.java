@@ -39,11 +39,8 @@ public class EnergyFactoryEvents implements Listener {
 
                 if (!String.valueOf(e.getClick()).equals("DOUBLE_CLICK") && !String.valueOf(e.getClick()).equals("NUMBER_KEY"))
                     if (!oldTick.containsKey(player.getUniqueId()) || currentTick - oldTick.get(player.getUniqueId()) > 0.7 || currentTick - oldTick.get(player.getUniqueId()) < -0.7) {
-
-                        getUserData.set("Minigames-Addon.Energy-Factory.Energy", minigame.addEnergy(player, null, "1"));
-                        getUserData.save();
+                        minigame.addEnergy(player, "1");
                         new EnergyFactory().setEnergy(player);
-
                     } oldTick.put(player.getUniqueId(), currentTick);
             } e.setCancelled(true);
         }
