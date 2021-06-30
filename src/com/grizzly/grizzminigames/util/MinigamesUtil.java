@@ -3,6 +3,7 @@ package com.grizzly.grizzminigames.util;
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzmain.util.ConfigMaker;
 import com.grizzly.grizzminigames.GrizzMinigames;
+import com.grizzly.grizzminigames.minigames.EnergyFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -251,65 +252,150 @@ public class MinigamesUtil implements InventoryHolder {
     }
 
     public String addNumbers(Player player, String baseAmount, String addAmount, boolean debugMode) {
-        char[] storedNumber = baseAmount.toCharArray();
-        char[] newAmount = addAmount.toCharArray();
+        try {
+            char[] storedNumber = baseAmount.toCharArray();
+            char[] newAmount = addAmount.toCharArray();
 
-        StringBuilder finishedAmount = new StringBuilder();
+            StringBuilder finishedAmount = new StringBuilder();
 
-        while (storedNumber.length < newAmount.length) storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
-        while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
+            while (storedNumber.length < newAmount.length)
+                storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
+            while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
 
-        boolean plusOne = false;
+            boolean plusOne = false;
 
-        if (debugMode) player.sendMessage(String.valueOf(storedNumber) + "\n" + String.valueOf(newAmount));
+            if (debugMode) player.sendMessage(String.valueOf(storedNumber) + "\n" + String.valueOf(newAmount));
 
-        for (int i = newAmount.length - 1; i > -1; i--) {
-            int base = Integer.parseInt(String.valueOf(storedNumber[i]));
-            int add = Integer.parseInt(String.valueOf(newAmount[i]));
-            int newNum;
+            for (int i = newAmount.length - 1; i > -1; i--) {
+                int base = Integer.parseInt(String.valueOf(storedNumber[i]));
+                int add = Integer.parseInt(String.valueOf(newAmount[i]));
+                int newNum;
 
-            if (plusOne) add++;
+                if (plusOne) add++;
 
-            if (debugMode) {
-                player.sendMessage("§3Previous > 10: §a" + plusOne);
-                player.sendMessage("§3Current Formula: §a" + base + " + " + add + " = " + (base + add));
-            } if (base + add > 9) {
-                plusOne = true;
-                newNum = base + add - 10;
-            } else {
-                plusOne = false;
-                newNum = base + add;
-            } finishedAmount.insert(0, newNum);
-        } if (plusOne) finishedAmount.insert(0, "1");
-        if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + finishedAmount.toString());
-        return finishedAmount.toString();
+                if (debugMode) {
+                    player.sendMessage("§3Previous > 10: §a" + plusOne);
+                    player.sendMessage("§3Current Formula: §a" + base + " + " + add + " = " + (base + add));
+                }
+                if (base + add > 9) {
+                    plusOne = true;
+                    newNum = base + add - 10;
+                } else {
+                    plusOne = false;
+                    newNum = base + add;
+                }
+                finishedAmount.insert(0, newNum);
+            }
+            if (plusOne) finishedAmount.insert(0, "1");
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+            return finishedAmount.toString();
+        } catch (Exception e) {
+            player.sendMessage("§cPlease enter valid numbers.");
+            return null;
+        }
     }
 
     public String subtractNumbers(Player player, String baseAmount, String removeAmount, boolean debugMode) {
-        char[] storedNumber = baseAmount.toCharArray();
-        char[] newAmount = removeAmount.toCharArray();
+        try {
+            char[] storedNumber = baseAmount.toCharArray();
+            char[] newAmount = removeAmount.toCharArray();
 
-        while (storedNumber.length < newAmount.length)
-            storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
-        while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
+            while (storedNumber.length < newAmount.length)
+                storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
+            while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
 
-        if (debugMode) player.sendMessage("§3Base: §a" + String.valueOf(storedNumber) + "\n§3Subtract: §a" + String.valueOf(newAmount));
+            if (debugMode)
+                player.sendMessage("§3Base: §a" + String.valueOf(storedNumber) + "\n§3Subtract: §a" + String.valueOf(newAmount));
 
-        StringBuilder finishedAmount = subtractLoop(player, debugMode, newAmount, storedNumber);
+            StringBuilder finishedAmount = subtractLoop(player, debugMode, newAmount, storedNumber);
 
-        if (String.valueOf(finishedAmount.toString().toCharArray()[0]).equalsIgnoreCase("Y")) {
-            if (debugMode) player.sendMessage("§3Swapping final number to negative...");
-            finishedAmount = subtractLoop(player, debugMode, storedNumber, newAmount);
-            finishedAmount.deleteCharAt(0);
-            finishedAmount.insert(0, "-");
-            while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0")) finishedAmount.deleteCharAt(1);
-        } else {
-            while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0")) finishedAmount.deleteCharAt(1);
-            finishedAmount.deleteCharAt(0);
+            if (finishedAmount == null) return null;
+
+            if (String.valueOf(finishedAmount.toString().toCharArray()[0]).equalsIgnoreCase("Y")) {
+                if (debugMode) player.sendMessage("§3Swapping final number to negative...");
+                finishedAmount = subtractLoop(player, debugMode, storedNumber, newAmount);
+                finishedAmount.deleteCharAt(0);
+                finishedAmount.insert(0, "-");
+                while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0"))
+                    finishedAmount.deleteCharAt(1);
+            } else {
+                while (String.valueOf(finishedAmount.toString().toCharArray()[1]).equals("0"))
+                    finishedAmount.deleteCharAt(1);
+                finishedAmount.deleteCharAt(0);
+            }
+
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+            return finishedAmount.toString();
+        } catch (Exception e) {
+            player.sendMessage("§cPlease enter valid numbers.");
+            return null;
         }
+    }
 
-        if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + finishedAmount.toString());
-        return finishedAmount.toString();
+    public String multiplyNumbers(Player player, String baseAmount, String multiplyAmount, boolean debugMode) {
+        try {
+            char[] storedNumber = baseAmount.toCharArray();
+            char[] newAmount = multiplyAmount.toCharArray();
+            while (storedNumber.length < newAmount.length) storedNumber = ("0" + String.valueOf(storedNumber)).toCharArray();
+            while (newAmount.length < storedNumber.length) newAmount = ("0" + String.valueOf(newAmount)).toCharArray();
+            if (debugMode) player.sendMessage("§3Base: §a" + String.valueOf(storedNumber) + "\n§3Multiply: §a" + String.valueOf(newAmount));
+            StringBuilder finishedAmount = new StringBuilder();
+
+            int extraAmount = 0;
+            int addExtraToEnd = 0;
+            int currentMultiDigit = 0;
+            HashMap<Integer, String> loopNum = new HashMap<>();
+
+            for (int i = newAmount.length - 1; i > -1; i--) {
+                int multi = Integer.parseInt(String.valueOf(storedNumber[i]));
+
+                boolean addExtra = false;
+                String finalNum = "0";
+                int currentBaseDigit = 0;
+                player.sendMessage("§3Current Multiplier: §a" + multi);
+
+                for (int i2 = newAmount.length - 1; i2 > -1; i2--) {
+
+                    int base = Integer.parseInt(String.valueOf(newAmount[i2]));
+                    player.sendMessage("§3Current Base: §a" + base);
+
+                    int currentNum = base * multi + extraAmount;
+
+                    if (currentNum > 9) {
+                        extraAmount = Integer.parseInt(String.valueOf(String.valueOf(base * multi + extraAmount).toCharArray()[0]));
+                        if (debugMode) player.sendMessage("§3Extra Amount: §a" + extraAmount);
+                        finalNum = addNumbers(player, finalNum, addZeros(String.valueOf(currentNum - (extraAmount * 10)), currentBaseDigit + currentMultiDigit), false);
+                    } else {
+                        extraAmount = 0;
+                        finalNum = addNumbers(player, finalNum, addZeros(String.valueOf(currentNum), currentBaseDigit + currentMultiDigit), false);
+                    } if (debugMode) player.sendMessage("§3Current Final Num for Digit: §a" + finalNum);
+                    currentBaseDigit++;
+                } finalNum = addNumbers(player, finalNum, addZeros(String.valueOf(extraAmount), finalNum.length()), false);
+                if (debugMode) player.sendMessage("§3Total digit multiplier: §a" + finalNum);
+                loopNum.put(currentMultiDigit, String.valueOf(finalNum));
+                extraAmount = 0;
+                currentMultiDigit++;
+            } String finalNumberNum = "0";
+
+            for (int i = 0; i < currentMultiDigit; i++) finalNumberNum = addNumbers(player, finalNumberNum, loopNum.get(i), false);
+
+            player.sendMessage("\n\n§3Final Number Num: §a" + finalNumberNum);
+
+            finishedAmount.append(finalNumberNum);
+            while (String.valueOf(finishedAmount.toString().toCharArray()[0]).equals("0")) finishedAmount.deleteCharAt(0);
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+
+            return finishedAmount.toString();
+        } catch (Exception e) {
+            player.sendMessage("§cPlease enter valid numbers.");
+            return null;
+        }
+    }
+
+    String addZeros(String msg, int amount) {
+        StringBuilder finalNum = new StringBuilder(msg);
+        for (int i = 0; i < amount; i++) finalNum.append("0");
+        return finalNum.toString();
     }
 
     public void setEnergy(Player player, String amount) {
@@ -330,29 +416,37 @@ public class MinigamesUtil implements InventoryHolder {
 
 
     StringBuilder subtractLoop(Player player, Boolean debugMode, char[] newAmount, char[] storedNumber) {
-        StringBuilder finishedAmount = new StringBuilder();
-        boolean minusOne = false;
+        try {
+            StringBuilder finishedAmount = new StringBuilder();
+            boolean minusOne = false;
 
-        for (int i = newAmount.length - 1; i > -1; i--) {
-            int base = Integer.parseInt(String.valueOf(storedNumber[i]));
-            int subtract = Integer.parseInt(String.valueOf(newAmount[i]));
-            int newNum;
+            for (int i = newAmount.length - 1; i > -1; i--) {
+                int base = Integer.parseInt(String.valueOf(storedNumber[i]));
+                int subtract = Integer.parseInt(String.valueOf(newAmount[i]));
+                int newNum;
 
-            if (minusOne) subtract++;
+                if (minusOne) subtract++;
 
-            if (debugMode) {
-                player.sendMessage("§3Previous negative: §a" + minusOne);
-                player.sendMessage("§3Current Formula: §a" + base + " - " + subtract + " = " + (base - subtract));
-            } if (base - subtract < 0) {
-                minusOne = true;
-                newNum = (10 + base) - subtract;
-            } else {
-                minusOne = false;
-                newNum = base - subtract;
-            } finishedAmount.insert(0, newNum);
-        } if (!minusOne) finishedAmount.insert(0, "N");
-        else finishedAmount.insert(0, "Y");
-        return finishedAmount;
+                if (debugMode) {
+                    player.sendMessage("§3Previous negative: §a" + minusOne);
+                    player.sendMessage("§3Current Formula: §a" + base + " - " + subtract + " = " + (base - subtract));
+                }
+                if (base - subtract < 0) {
+                    minusOne = true;
+                    newNum = (10 + base) - subtract;
+                } else {
+                    minusOne = false;
+                    newNum = base - subtract;
+                }
+                finishedAmount.insert(0, newNum);
+            }
+            if (!minusOne) finishedAmount.insert(0, "N");
+            else finishedAmount.insert(0, "Y");
+            return finishedAmount;
+        } catch (Exception e) {
+            player.sendMessage("§Please enter valid numbers.");
+            return null;
+        }
     }
 
 
