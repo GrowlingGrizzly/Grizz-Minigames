@@ -3,7 +3,6 @@ package com.grizzly.grizzminigames.util;
 import com.grizzly.grizzmain.Grizz;
 import com.grizzly.grizzmain.util.ConfigMaker;
 import com.grizzly.grizzminigames.GrizzMinigames;
-import com.grizzly.grizzminigames.minigames.EnergyFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -251,6 +250,28 @@ public class MinigamesUtil implements InventoryHolder {
         } return num;
     }
 
+    public String formatStringNum(String energy) {
+        StringBuilder formattedNum = new StringBuilder();
+
+        char[] energyAmount = energy.toCharArray();
+        int addComma = 0;
+
+        if (energyAmount.length > 3) {
+            for (int i = energyAmount.length - 1; i > -1; i--) {
+
+                if (addComma == 3) {
+                    formattedNum.insert(0, ",");
+                    addComma = 0;
+                }
+
+                formattedNum.insert(0, energyAmount[i]);
+                addComma++;
+            }
+        } else formattedNum.insert(0, energy);
+
+        return formattedNum.toString();
+    }
+
     public String addNumbers(Player player, String baseAmount, String addAmount, boolean debugMode) {
         try {
             char[] storedNumber = baseAmount.toCharArray();
@@ -287,7 +308,7 @@ public class MinigamesUtil implements InventoryHolder {
                 finishedAmount.insert(0, newNum);
             }
             if (plusOne) finishedAmount.insert(0, "1");
-            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + formatStringNum(finishedAmount.toString()));
             return finishedAmount.toString();
         } catch (Exception e) {
             player.sendMessage("§cPlease enter valid numbers.");
@@ -324,7 +345,7 @@ public class MinigamesUtil implements InventoryHolder {
                 finishedAmount.deleteCharAt(0);
             }
 
-            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + formatStringNum(finishedAmount.toString()));
             return finishedAmount.toString();
         } catch (Exception e) {
             player.sendMessage("§cPlease enter valid numbers.");
@@ -383,7 +404,7 @@ public class MinigamesUtil implements InventoryHolder {
 
             finishedAmount.append(finalNumberNum);
             while (String.valueOf(finishedAmount.toString().toCharArray()[0]).equals("0")) finishedAmount.deleteCharAt(0);
-            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + new EnergyFactory().formatEnergy(finishedAmount.toString()));
+            if (debugMode) player.sendMessage("\n\n§3Finished Number: §a" + formatStringNum(finishedAmount.toString()));
 
             return finishedAmount.toString();
         } catch (Exception e) {

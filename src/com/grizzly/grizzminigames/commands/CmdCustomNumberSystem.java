@@ -30,16 +30,18 @@ public class CmdCustomNumberSystem implements TabExecutor {
 
         if (cmd.getName().equalsIgnoreCase("customnumbersystem")) {
 
-            if (args.length < 3 && !args[0].equalsIgnoreCase("format")) {
-                player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract/format> <base> <adding/subtracting #>"));
+            if (args.length < 3) {
+                if (args[0].equalsIgnoreCase("format")) {
+                    if (args.length < 2) player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract/multiply/format> <base num/formatting num> <math second num>"));
+                } else player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract/multiply/format> <base num/formatting num> <math second num>"));
                 return true;
             }
 
             if (args[0].equalsIgnoreCase("add")) minigameUtil.addNumbers(player, args[1], args[2], true);
             else if (args[0].equalsIgnoreCase("subtract")) minigameUtil.subtractNumbers(player, args[1], args[2], true);
             else if (args[0].equalsIgnoreCase("multiply")) minigameUtil.multiplyNumbers(player, args[1], args[2], true);
-            else if (args[0].equalsIgnoreCase("format")) player.sendMessage(new EnergyFactory().formatEnergy(args[1]));
-            else player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract> <base> <adding/subtracting #>"));
+            else if (args[0].equalsIgnoreCase("format")) player.sendMessage(minigameUtil.formatStringNum(args[1]));
+            else player.sendMessage(plugin.commandSyntax("/customnumbersystem <add/subtract/multiply/format> <base num/formatting num> <math second num>"));
         }
         return true;
     }
